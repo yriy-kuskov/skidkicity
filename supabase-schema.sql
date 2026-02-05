@@ -218,3 +218,29 @@ DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
 CREATE POLICY "Users can insert own profile" 
 ON public.profiles FOR INSERT 
 WITH CHECK (auth.uid() = id);
+
+-- 1. Удаляем ВООБЩЕ ВСЕ политики с таблицы profiles
+DO $$ 
+DECLARE pol record;
+BEGIN 
+    FOR pol IN SELECT policyname FROM pg_policies WHERE tablename = 'profiles' 
+    LOOP
+        EXECUTE format('DROP POLICY %I ON public.profiles', pol.policyname);
+    END LOOP;
+END $$;
+
+-- 2. Включаем RLS заново
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- 3. Создаем ОДНУ единственную политику: каждый видит только себя
+-- Это исключает вызов функций и рекурсию
+CREATE POLICY "allow_self_read" 
+ON public.profiles FOR SELECT 
+TO authenticated 
+USING (auth.uid() = id);
+
+-- 4. Даем админам (сервисной роли) доступ ко всему (для внутренних нужд Supabase)
+CREATE POLICY "allow_admin_service" 
+ON public.profiles FOR ALL 
+TO service_role 
+USING (true);
