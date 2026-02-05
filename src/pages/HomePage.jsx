@@ -97,7 +97,7 @@ export default function HomePage() {
         )}
 
         {/* ЛОКАЛЬНЫЙ ЛОАДЕР: Блокирует только контент, не размывает UI и не мешает кнопкам */}
-        {loading && deals.length === 0 && (
+        {loading && deals.length === 0 && !statusType && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/40 z-10 backdrop-blur-[2px] rounded-2xl transition-all">
             <div className="bg-white p-4 rounded-full shadow-xl border border-gray-100">
               <Loader2 className="w-10 h-10 text-primary animate-spin" />

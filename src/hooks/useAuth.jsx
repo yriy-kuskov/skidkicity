@@ -6,56 +6,70 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Изменяем начальное состояние на false, чтобы не блокировать главную страницу при старте
+  const [loading, setLoading] = useState(false); 
   const fetchInProgress = useRef(false);
 
   const fetchProfile = async (userId) => {
     if (fetchInProgress.current) return;
     fetchInProgress.current = true;
     
-    console.log('📡 [fetchProfile] Запуск для:', userId);
-    setLoading(true);
+    console.log('📡 [fetchProfile] Фоновая загрузка для:', userId);
+    // Для фоновой загрузки на главной не ставим глобальный setLoading(true), 
+    // чтобы не показывать спиннер на весь экран.
 
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('TIMEOUT')), 5000)
-    );
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      const { data, error } = await Promise.race([
-        supabase.from('profiles').select('*').eq('id', userId).single(),
-        timeoutPromise
-      ]);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single({ abortSignal: controller.signal });
 
       if (error) {
-        console.error('❌ [fetchProfile] Ошибка БД:', error.message);
-        throw error;
+        if (error.code === 'PGRST116') {
+          console.warn('⚠️ Профиль не найден в БД');
+        } else {
+          throw error;
+        }
       }
 
-      console.log('✅ [fetchProfile] Данные получены:', data);
-      setProfile(data);
+      if (data) {
+        console.log('✅ [fetchProfile] Профиль получен:', data.role);
+        setProfile(data);
+        // Сохраняем роль для мгновенного отображения кнопки админа в PWA
+        localStorage.setItem('user_role', data.role);
+      }
     } catch (err) {
-      console.error('❌ [fetchProfile] Глобальная ошибка:', err.message);
-      setProfile(null);
+      if (err.name === 'AbortError') {
+        console.warn('🛑 Запрос профиля прерван по таймауту');
+      } else {
+        console.error('❌ [fetchProfile] Ошибка:', err.message);
+      }
     } finally {
-      setLoading(false);
+      clearTimeout(timeoutId);
       fetchInProgress.current = false;
+      // Выключаем загрузку только если она была включена (например, для ProtectedRoute)
+      setLoading(false); 
     }
   };
 
   useEffect(() => {
     let isMounted = true;
 
-    // Слушаем изменение состояния авторизации
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔐 [Auth Event]:', event, session?.user?.id);
+      console.log('🔐 [Auth Event]:', event);
 
-      if (session?.user) {
+      if (session?.user && isMounted) {
         setUser(session.user);
-        // Загружаем профиль, если его нет
-        await fetchProfile(session.user.id);
-      } else {
+        // Запускаем загрузку профиля в фоне
+        fetchProfile(session.user.id);
+      } else if (isMounted) {
         setUser(null);
         setProfile(null);
+        localStorage.removeItem('user_role');
         setLoading(false);
       }
     });
@@ -68,11 +82,30 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     setLoading(true);
-    await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
-    localStorage.clear();
-    setLoading(false);
+    
+    try {
+      // 1. Сначала чистим локальные данные
+      localStorage.clear();
+      setUser(null);
+      setProfile(null);
+
+      // 2. Уведомляем Service Worker (если есть), чтобы сбросить кэш
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (let reg of registrations) {
+          reg.active?.postMessage({ type: 'SKIP_WAITING' });
+        }
+      }
+
+      // 3. Выходим из Supabase
+      await supabase.auth.signOut();
+      
+      // 4. Жёсткая перезагрузка страницы для очистки всех зависших AbortController
+      window.location.href = '/'; 
+    } catch (error) {
+      console.error('Ошибка при выходе:', error);
+      window.location.reload();
+    }
   };
 
   return (
@@ -80,8 +113,9 @@ export const AuthProvider = ({ children }) => {
       user, 
       profile, 
       loading, 
+      setLoading, // Добавляем возможность включать лоадер из ProtectedRoute
       signOut, 
-      isAdmin: profile?.role === 'admin' 
+      isAdmin: profile?.role === 'admin' || localStorage.getItem('user_role') === 'admin'
     }}>
       {children}
     </AuthContext.Provider>
