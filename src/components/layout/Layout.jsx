@@ -1,4 +1,5 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import Header from './Header'; // Убедись, что пути к файлам верные
 import BottomNav from './BottomNav';
 
@@ -14,7 +15,7 @@ export default function Layout({ children }) {
 
       {/* Основной контент страницы */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
-        {children}
+        <Outlet />
       </main>
 
       {/* Нижнее меню */}

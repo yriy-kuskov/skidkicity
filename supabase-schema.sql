@@ -95,3 +95,126 @@ CREATE POLICY "Allow anon insert" ON categories FOR INSERT WITH CHECK (true);
 -- добавляем колонку в таблицу products, чтобы хранить ссылку на сгенерированный штрихкод товара
 ALTER TABLE products 
 ADD COLUMN IF NOT EXISTS barcode_image_url TEXT;
+
+-- СОЗДАЁМ РЕГИСТРАЦИЮ/АВТОРИЗАЦИЮ ПОЛЬЗОВАТЕЛЕЙ
+-- 1. Создаем таблицу профилей
+CREATE TABLE public.profiles (
+  id uuid REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
+  email TEXT,
+  role TEXT DEFAULT 'user' CHECK (role IN ('user', 'moderator', 'admin')),
+  full_name TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. Включаем RLS (Row Level Security)
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- 3. Настраиваем политики доступа
+CREATE POLICY "Профили видимы всем" ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Пользователи могут менять свой профиль" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+
+-- 4. ФУНКЦИЯ-ТРИГГЕР: Автоматическое создание профиля при регистрации
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, role)
+  VALUES (new.id, new.email, 'user');
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 5. Запуск триггера
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- SQL: Создаем универсальный «ключ» админа
+-- Функция для проверки, является ли текущий пользователь админом
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean AS $$
+BEGIN
+  RETURN (
+    SELECT (role = 'admin')
+    FROM public.profiles
+    WHERE id = auth.uid()
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Теперь, когда ты создаешь любую новую таблицу (или для текущих: deals, stores, products), тебе нужно просто включить RLS и бахнуть одну универсальную политику
+-- Разрешить админу ВСЁ в таблице (замени 'deals' на имя любой таблицы)
+CREATE POLICY "Admins have full access" 
+ON public.deals 
+FOR ALL 
+TO authenticated 
+USING (public.is_admin());
+
+-- Разрешить админу ВСЁ в таблице stores
+CREATE POLICY "Admins have full access" 
+ON public.stores 
+FOR ALL 
+TO authenticated 
+USING (public.is_admin());
+
+-- Разрешить админу ВСЁ в таблице products
+CREATE POLICY "Admins have full access" 
+ON public.products 
+FOR ALL 
+TO authenticated 
+USING (public.is_admin());
+
+-- Разрешить админу ВСЁ в таблице categories
+CREATE POLICY "Admins have full access" 
+ON public.categories 
+FOR ALL 
+TO authenticated 
+USING (public.is_admin());
+
+-- 1. Включаем защиту на таблицах (если еще не включена)
+-- 1. Гарантируем, что RLS включен (чтобы правила работали одинаково для всех)
+ALTER TABLE public.deals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stores ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+
+-- 2. Удаляем старые конфликтующие политики (чтобы не было ошибок duplicate)
+DROP POLICY IF EXISTS "Все могут смотреть скидки" ON public.deals;
+DROP POLICY IF EXISTS "Все могут смотреть магазины" ON public.stores;
+DROP POLICY IF EXISTS "Все могут смотреть категории" ON public.categories;
+DROP POLICY IF EXISTS "Все могут смотреть товары" ON public.products;
+
+-- 3. Создаем ГЛОБАЛЬНЫЕ разрешения на чтение
+-- "TO public" означает "И для гостей, и для залогиненных"
+CREATE POLICY "Public Read Access Deals" 
+ON public.deals FOR SELECT 
+TO public 
+USING (true);
+
+CREATE POLICY "Public Read Access Stores" 
+ON public.stores FOR SELECT 
+TO public 
+USING (true);
+
+CREATE POLICY "Public Read Access Categories" 
+ON public.categories FOR SELECT 
+TO public 
+USING (true);
+
+CREATE POLICY "Public Read Access Products" 
+ON public.products FOR SELECT 
+TO public 
+USING (true);
+
+-- Разрешаем пользователям читать СВОЙ собственный профиль
+-- Это критично для того, чтобы useAuth мог узнать роль пользователя
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
+
+CREATE POLICY "Users can view own profile" 
+ON public.profiles FOR SELECT 
+USING (auth.uid() = id);
+
+-- На всякий случай разрешим вставку самому себе (для регистрации)
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
+CREATE POLICY "Users can insert own profile" 
+ON public.profiles FOR INSERT 
+WITH CHECK (auth.uid() = id);

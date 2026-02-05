@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, ScanLine } from 'lucide-react';
+import HasAccess from '../common/HasAccess';
 
 /**
  * @component BottomNav
@@ -26,6 +27,7 @@ export default function BottomNav() {
             <span className="text-xs mt-1 font-medium">Главная</span>
           </Link>
 
+          <HasAccess roles={['admin']}>
           <Link
             to="/admin"
             className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${
@@ -35,6 +37,7 @@ export default function BottomNav() {
             <ScanLine className="w-6 h-6" />
             <span className="text-xs mt-1 font-medium">Админ</span>
           </Link>
+          </HasAccess>          
         </div>
       </div>
     </nav>
