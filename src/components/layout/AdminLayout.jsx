@@ -16,9 +16,12 @@ export default function AdminLayout() {
 
   const menuItems = [
     { name: 'Дашборд', path: '/admin', icon: '📊' },
-    { name: 'Типы скидок', path: '/admin/deal-types', icon: '🏷️' },
     { name: 'Магазины', path: '/admin/stores', icon: '🏪' },
+    { name: 'Категории товаров', path: '/admin/categories', icon: '📁' },
     { name: 'Товары', path: '/admin/products', icon: '📦' },
+    { name: 'Скидки', path: '/admin/deals', icon: '🔥' },
+    { name: 'Типы скидок', path: '/admin/deal-types', icon: '🏷️' },
+    { name: 'Пользователи', path: '/admin/users', icon: '👥' },
   ];
 
   return (

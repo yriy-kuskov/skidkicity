@@ -278,3 +278,13 @@ ADD COLUMN IF NOT EXISTS discount_value NUMERIC, -- Для сортировки 
 ADD COLUMN IF NOT EXISTS description TEXT,
 ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true,
 ADD COLUMN IF NOT EXISTS deal_type_id BIGINT REFERENCES deal_types(id);
+
+-- включаем rls 
+ALTER TABLE public.deal_types ENABLE ROW LEVEL SECURITY;
+
+-- Создаем ГЛОБАЛЬНЫЕ разрешения на чтение
+-- "TO public" означает "И для гостей, и для залогиненных"
+CREATE POLICY "Public Read Access Deal Types" 
+ON public.deal_types FOR SELECT 
+TO public 
+USING (true);

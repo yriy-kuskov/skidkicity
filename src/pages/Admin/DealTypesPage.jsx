@@ -25,6 +25,7 @@ export default function DealTypesPage() {
 
   // Конфигурация колонок таблицы
   const tableColumns = [
+    { label: 'ID', key: 'id', className: 'w-10 text-gray-400' },
     { label: 'Название', key: 'name', className: 'font-bold' },
     { label: 'Описание', key: 'description', render: (row) => (
         <span className="text-gray-500">{row.description || '-'}</span>
@@ -37,7 +38,7 @@ export default function DealTypesPage() {
     <AdminPage>
       <AdminHeader 
         title="Типы скидок" 
-        subtitle="Управляйте категориями акций (например: 1+1, Скидка руб)" 
+        subtitle="Управляйте типами акций (например: 1+1, Скидка в рублях и т.д.)" 
         icon="🏷️"
       />
 

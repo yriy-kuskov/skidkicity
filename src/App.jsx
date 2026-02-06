@@ -8,6 +8,10 @@ import AdminPage from './pages/AdminPage';
 import DealTypesPage from './pages/Admin/DealTypesPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import ProductsPage from './pages/Admin/ProductsPage';
+import CategoriesPage from './pages/Admin/CategoriesPage';
+import DealsPage from './pages/Admin/DealsPage';
+import StoresPage from './pages/Admin/StoresPage';
 import { AuthProvider } from './hooks/useAuth';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -29,6 +33,10 @@ function App() {
           {/* Вложенные маршруты будут рендериться в Outlet внутри AdminLayout */}
           <Route index element={<AdminPage />} />
           <Route path="deal-types" element={<DealTypesPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="categories" element={<CategoriesPage />} />
+          <Route path="deals" element={<DealsPage />} />
+          <Route path="stores" element={<StoresPage />} />
           {/* Будущие страницы: 
           <Route path="stores" element={<StoresPage />} /> 
           */}
