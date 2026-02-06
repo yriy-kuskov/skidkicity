@@ -52,6 +52,7 @@ export default function DealsPage() {
           <AdminFormSection controller={controller} title="Скидка">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <CakeInput 
+                type="textarea"
                 field="description" 
                 label="Описание" 
                 placeholder="Описание скидки/акции." 
