@@ -4,6 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 import { registerSW } from 'virtual:pwa-register'
+import { supabase } from './lib/supabase';
+import { CakeReact } from './cakereact/src';
+
+CakeReact.init(supabase);
 
 // Автоматическое обновление Service Worker
 registerSW({ immediate: true })

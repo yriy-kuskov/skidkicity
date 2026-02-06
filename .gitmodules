@@ -1,0 +1,3 @@
+[submodule "src/cakereact"]
+	path = src/cakereact
+	url = https://github.com/yriy-kuskov/cakereact-core.git
