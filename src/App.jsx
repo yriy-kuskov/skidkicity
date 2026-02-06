@@ -14,6 +14,7 @@ import DealsPage from './pages/Admin/DealsPage';
 import StoresPage from './pages/Admin/StoresPage';
 import { AuthProvider } from './hooks/useAuth';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import { CakeNotFound } from './cakereact/src/Components/Pages/CakeNotFound';
 
 function App() {
   return (
@@ -47,6 +48,20 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Route>
+
+        {/* 404: Ловушка для всех неопределенных путей */}
+        {/* Мы помещаем её вне лейаутов или внутрь основного, в зависимости от дизайна */}
+        {/*Важно: этот роут должен стоять последним в списке*/}
+        <Route path="*" element={<CakeNotFound />} />
+        <Route path="/admin/*" element={
+  <CakeNotFound 
+    title="Объект не найден в базе" 
+    icon="🔍" 
+    message="Мы обыскали всю базу данных, но такой записи не существует."
+    homePath="/admin"
+    buttonText="В панель управления"
+  />
+} />
       </Routes>
     </AuthProvider>
   )
