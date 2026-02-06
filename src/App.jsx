@@ -17,6 +17,16 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import { CakeNotFound } from './cakereact/src/Components/Pages/CakeNotFound';
 
 function App() {
+  const notFoundAdminCategories = [
+    { name: 'Дашборд', path: '/admin', icon: '📊' },
+    { name: 'Магазины', path: '/admin/stores', icon: '🏪' },
+    { name: 'Категории товаров', path: '/admin/categories', icon: '📁' },
+    { name: 'Товары', path: '/admin/products', icon: '📦' },
+    { name: 'Скидки', path: '/admin/deals', icon: '🔥' },
+    { name: 'Типы скидок', path: '/admin/deal-types', icon: '🏷️' },
+    { name: 'Пользователи', path: '/admin/users', icon: '👥' },
+  ];
+
   return (
     <AuthProvider>
       <Routes>
@@ -53,15 +63,16 @@ function App() {
         {/* Мы помещаем её вне лейаутов или внутрь основного, в зависимости от дизайна */}
         {/*Важно: этот роут должен стоять последним в списке*/}
         <Route path="*" element={<CakeNotFound />} />
-        {/*<Route path="/admin/*" element={
+        <Route path="/admin/*" element={
   <CakeNotFound 
     title="Объект не найден в базе" 
     icon="🔍" 
     message="Мы обыскали всю базу данных, но такой записи не существует."
     homePath="/admin"
-    buttonText="В панель управления"
+    buttonText="В панель управления" 
+    categories = {notFoundAdminCategories}
   />
-} />*/}
+} />
       </Routes>
     </AuthProvider>
   )
