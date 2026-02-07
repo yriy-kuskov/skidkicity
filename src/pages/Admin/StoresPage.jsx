@@ -57,6 +57,7 @@ export default function StoresPage() {
                 label="Logo" 
                 placeholder="" 
                 required 
+                helpText="Используйте текст. Например, иконку эмодзи 🏪"
               />
               <CakeInput 
                 field="name" 
@@ -65,14 +66,17 @@ export default function StoresPage() {
                 required 
               />
               <CakeInput 
+                type="textarea"
                 field="address" 
                 label="Адрес магазина" 
                 placeholder="Лихославль, ул. Советская, д.28" 
               />
               <CakeInput 
+                type="textarea"
                 field="description" 
                 label="Описание" 
                 placeholder="Описание магазина." 
+                helpText="Введите текст описания магазина."
               />
             </div>
           </AdminFormSection>

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useController } from '../../cakereact/src/Controller/useController';
-import { CakeForm, CakeInput } from '../../cakereact/src/Components/FormHelper';
+import { CakeForm, CakeInput, CakeSelect, CakeMultiSelect } from '../../cakereact/src/Components/FormHelper';
 import { 
   AdminPage, 
   AdminHeader, 
@@ -8,9 +8,15 @@ import {
   AdminTableSection 
 } from '../../cakereact/src/Components/AdminUI';
 import { DealModel } from '../../models/Deal';
+import { ProductModel } from '../../models/Product';
+import { StoreModel } from '../../models/Store';
+import { DealTypeModel } from '../../models/DealType';
+import { CakeImage } from '../../cakereact/src/Components/CakeImage';
+
+const dealModel = new DealModel();
 
 export default function DealsPage() {
-    const controller = useController(DealModel);
+    const controller = useController(dealModel);
     const { getList, setRecord } = controller;
   
     useEffect(() => {
@@ -29,7 +35,13 @@ export default function DealsPage() {
       { label: 'Описание', key: 'description', render: (row) => (
         <span className="text-gray-500">{row.description || '-'}</span>
     )},
-      { label: 'Фото ценника', key: 'image_url', className: 'font-bold' },
+    { label: 'Фото ценника', key: 'image_url', render: (row) => (
+      <CakeImage 
+      src={row.image_url} 
+      alt={`Фото ценника акции: ${row.description || row.id}`} 
+      zoomable={true} // Теперь картинку можно увеличить!
+    />
+  )},
       { label: 'Старая цена', key: 'old_price', className: 'font-bold' },
       { label: 'Новая цена', key: 'new_price', className: 'font-bold' },
       { label: 'Процент скидки', key: 'discount_value', className: 'font-bold' },
@@ -51,6 +63,8 @@ export default function DealsPage() {
         <CakeForm controller={controller}>
           <AdminFormSection controller={controller} title="Скидка">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div className="space-y-2">
             <CakeInput 
                 type="textarea"
                 field="description" 
@@ -72,6 +86,18 @@ export default function DealsPage() {
                 field="discount_value" 
                 label="Размер скидки в %" 
               />          
+            </div>
+
+            <div className="space-y-2">
+                {/* Поля для UploadImageBehavior */}
+                <CakeInput type="file" field="image_url" label="Фото ценника товара с акцией" helpText="Будет оптимизировано перед загрузкой" />
+
+                {/* Пример использования Select/MultiSelect */}
+                <CakeSelect field="product_id" label="Товар" model={ProductModel} />
+                <CakeSelect field="store_id" label="Магазин" model={StoreModel} />
+                <CakeSelect field="deal_type_id" label="Тип акции/скидки" model={DealTypeModel} />
+              </div>
+            
             </div>
           </AdminFormSection>
         </CakeForm>

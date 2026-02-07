@@ -9,6 +9,7 @@ import {
 } from '../../cakereact/src/Components/AdminUI';
 import { ProductModel } from '../../models/Product';
 import { CategoryModel } from '../../models/Category';
+import { CakeImage } from '../../cakereact/src/Components/CakeImage';
 
 const productModel = new ProductModel();
 
@@ -30,10 +31,18 @@ export default function ProductsPage() {
     const tableColumns = [
       { label: 'ID', key: 'id', className: 'w-10 text-gray-400' },
       { label: 'Фото', key: 'image_url', render: (row) => (
-        row.image_url ? <img src={row.image_url} className="w-10 h-10 object-cover rounded shadow-sm border border-gray-200" alt="product" /> : <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-[10px] text-gray-400">Нет фото</div>
+        <CakeImage 
+        src={row.image_url} 
+        alt={`Товар: ${row.name}`} 
+        zoomable={true} // Теперь картинку можно увеличить!
+      />
     )},
     { label: 'Изображение штрихкода товара', key: 'barcode_image_url', render: (row) => (
-      row.barcode_image_url ? <img src={row.barcode_image_url} className="w-10 h-10 object-cover rounded shadow-sm border border-gray-200" alt="product" /> : <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-[10px] text-gray-400">Нет фото</div>
+      <CakeImage 
+        src={row.barcode_image_url} 
+        alt={`Штрихкод товара: ${row.name}`} 
+        zoomable={true} // Теперь картинку можно увеличить!
+      />
   )},
       { label: 'Штрихкод', key: 'barcode', className: 'font-bold' },
       { label: 'Название', key: 'name', className: 'font-bold' },
@@ -80,7 +89,7 @@ export default function ProductsPage() {
 
               <div className="space-y-2">
                 {/* Поля для UploadImageBehavior */}
-              <CakeInput type="file" field="image_url" label="Основное фото" helpText="Будет оптимизировано перед загрузкой" />
+                <CakeInput type="file" field="image_url" label="Основное фото" helpText="Будет оптимизировано перед загрузкой" />
                 <CakeInput type="file" field="barcode_image_url" label="Скан штрихкода" />
 
                 {/* Пример использования Select/MultiSelect */}
