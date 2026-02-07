@@ -32,9 +32,6 @@ export default function DealsPage() {
     // Конфигурация колонок таблицы
     const tableColumns = [
       { label: 'ID', key: 'id', className: 'w-10 text-gray-400' },
-      { label: 'Описание', key: 'description', render: (row) => (
-        <span className="text-gray-500">{row.description || '-'}</span>
-    )},
     { label: 'Фото ценника', key: 'image_url', render: (row) => (
       <CakeImage 
       src={row.image_url} 
@@ -42,6 +39,9 @@ export default function DealsPage() {
       zoomable={true} // Теперь картинку можно увеличить!
     />
   )},
+  { label: 'Описание', key: 'description', render: (row) => (
+    <span className="text-gray-500">{row.description || '-'}</span>
+)},
       { label: 'Старая цена', key: 'old_price', className: 'font-bold' },
       { label: 'Новая цена', key: 'new_price', className: 'font-bold' },
       { label: 'Процент скидки', key: 'discount_value', className: 'font-bold' },
@@ -85,7 +85,12 @@ export default function DealsPage() {
                 type="number"
                 field="discount_value" 
                 label="Размер скидки в %" 
-              />          
+              /> 
+              <CakeInput 
+                type="checkbox"
+                field="is_active" 
+                label="Акция активна?" 
+              />         
             </div>
 
             <div className="space-y-2">

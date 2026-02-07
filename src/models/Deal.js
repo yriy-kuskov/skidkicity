@@ -15,8 +15,9 @@ export class DealModel extends BaseModel {
         transformers: [
           // Оптимизируем: макс. ширина 800px, качество 70%, формат WebP (он легче)
           (file) => ImageOptimizer.compress(file, { 
-            maxWidth: 800, 
-            quality: 0.7,
+            maxWidth: 400, 
+            maxHeight: 400,
+            quality: 0.6,
             mimeType: 'image/webp' 
          })
         ]
