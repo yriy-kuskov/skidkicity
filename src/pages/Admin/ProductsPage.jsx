@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useController } from '../../cakereact/src/Controller/useController';
-import { CakeForm, CakeInput } from '../../cakereact/src/Components/FormHelper';
+import { CakeForm, CakeInput, CakeSelect, CakeMultiSelect } from '../../cakereact/src/Components/FormHelper';
 import { 
   AdminPage, 
   AdminHeader, 
@@ -8,9 +8,12 @@ import {
   AdminTableSection 
 } from '../../cakereact/src/Components/AdminUI';
 import { ProductModel } from '../../models/Product';
+import { CategoryModel } from '../../models/Category';
+
+const productModel = new ProductModel();
 
 export default function ProductsPage() {
-    const controller = useController(ProductModel);
+    const controller = useController(productModel);
     const { getList, setRecord } = controller;
   
     useEffect(() => {
@@ -26,8 +29,12 @@ export default function ProductsPage() {
     // Конфигурация колонок таблицы
     const tableColumns = [
       { label: 'ID', key: 'id', className: 'w-10 text-gray-400' },
-      { label: 'Фото товара', key: 'image_url', className: 'font-bold' },
-      { label: 'Изображение штрихкода товара', key: 'barcode_image_url', className: 'font-bold' },
+      { label: 'Фото', key: 'image_url', render: (row) => (
+        row.image_url ? <img src={row.image_url} className="w-10 h-10 object-cover rounded shadow-sm border border-gray-200" alt="product" /> : <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-[10px] text-gray-400">Нет фото</div>
+    )},
+    { label: 'Изображение штрихкода товара', key: 'barcode_image_url', render: (row) => (
+      row.barcode_image_url ? <img src={row.barcode_image_url} className="w-10 h-10 object-cover rounded shadow-sm border border-gray-200" alt="product" /> : <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-[10px] text-gray-400">Нет фото</div>
+  )},
       { label: 'Штрихкод', key: 'barcode', className: 'font-bold' },
       { label: 'Название', key: 'name', className: 'font-bold' },
       { label: 'Описание', key: 'description', render: (row) => (
@@ -48,7 +55,9 @@ export default function ProductsPage() {
         {/* Секция Формы */}
         <CakeForm controller={controller}>
           <AdminFormSection controller={controller} title="Товар">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+
+            <div className="space-y-2">
             <CakeInput 
                 field="barcode" 
                 label="Штрихкод" 
@@ -62,10 +71,21 @@ export default function ProductsPage() {
                 required 
               />
               <CakeInput 
+                type="textarea"
                 field="description" 
                 label="Описание" 
                 placeholder="Описание товара." 
               />
+              </div>
+
+              <div className="space-y-2">
+                {/* Поля для UploadImageBehavior */}
+              <CakeInput type="file" field="image_url" label="Основное фото" helpText="Будет оптимизировано перед загрузкой" />
+                <CakeInput type="file" field="barcode_image_url" label="Скан штрихкода" />
+
+                {/* Пример использования Select/MultiSelect */}
+                <CakeSelect field="category_id" label="Категория" model={CategoryModel} />
+              </div>              
             </div>
           </AdminFormSection>
         </CakeForm>

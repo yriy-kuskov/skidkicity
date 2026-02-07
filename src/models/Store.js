@@ -1,5 +1,9 @@
 import { BaseModel } from '../cakereact/src/Model/BaseModel';
 
-export const StoreModel = new BaseModel('stores', {
-  displayField: 'name',
-});
+export class StoreModel extends BaseModel {
+  constructor() {
+    super('stores', {
+      displayField: 'name',
+    });
+  }
+}

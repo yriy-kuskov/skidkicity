@@ -9,8 +9,10 @@ import {
 } from '../../cakereact/src/Components/AdminUI';
 import { CategoryModel } from '../../models/Category';
 
+const categoryModel = new CategoryModel();
+
 export default function CategoriesPage() {
-    const controller = useController(CategoryModel);
+    const controller = useController(categoryModel);
     const { getList, setRecord } = controller;
   
     useEffect(() => {

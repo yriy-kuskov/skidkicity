@@ -58,14 +58,17 @@ export default function DealsPage() {
                 placeholder="Описание скидки/акции." 
               />
               <CakeInput 
+                type="number"
                 field="old_price" 
                 label="Старая цена" 
               />
               <CakeInput 
+                type="number"
                 field="new_price" 
                 label="Новая цена" 
               />
               <CakeInput 
+                type="number"
                 field="discount_value" 
                 label="Размер скидки в %" 
               />          

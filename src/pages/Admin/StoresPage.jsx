@@ -9,8 +9,10 @@ import {
 } from '../../cakereact/src/Components/AdminUI';
 import { StoreModel } from '../../models/Store';
 
+const storeModel = new StoreModel();
+
 export default function StoresPage() {
-    const controller = useController(StoreModel);
+    const controller = useController(storeModel);
     const { getList, setRecord } = controller;
   
     useEffect(() => {

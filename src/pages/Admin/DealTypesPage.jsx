@@ -53,6 +53,7 @@ export default function DealTypesPage() {
               required 
             />
             <CakeInput 
+              type="textarea"
               field="description" 
               label="Описание" 
               placeholder="Краткое описание механики" 
