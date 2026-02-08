@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import { useController } from '../../cakereact/src/Controller/useController';
-import { CakeForm, CakeInput } from '../../cakereact/src/Components/FormHelper';
+import React, { useEffect, useMemo } from 'react';
+import { useController } from '../../cakereact/src';
+import { CakeForm, CakeInput } from '../../cakereact/src';
 import { 
   AdminPage, 
   AdminHeader, 
   AdminFormSection, 
   AdminTableSection 
-} from '../../cakereact/src/Components/AdminUI';
+} from '../../cakereact/src';
 import { CategoryModel } from '../../models/Category';
 
-const categoryModel = new CategoryModel();
-
 export default function CategoriesPage() {
+    // Модель создается только при первом рендере страницы
+    const categoryModel = useMemo(() => new CategoryModel(), []);
     const controller = useController(categoryModel);
     const { getList, setRecord } = controller;
   

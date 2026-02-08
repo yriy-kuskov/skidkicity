@@ -1,4 +1,4 @@
-import { BaseModel } from '../cakereact/src/Model/BaseModel';
+import { BaseModel } from '../cakereact/src';
 
 export class StoreModel extends BaseModel {
   constructor() {

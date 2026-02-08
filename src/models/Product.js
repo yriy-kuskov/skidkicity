@@ -1,6 +1,6 @@
-import { BaseModel } from '../cakereact/src/Model/BaseModel';
-import { ImageOptimizer } from '../cakereact/src/Utils/ImageOptimizer';
-import { UploadImageBehavior } from '../cakereact/src/Model/Behaviors/UploadImageBehavior';
+import { BaseModel } from '../cakereact/src';
+import { ImageOptimizer } from '../cakereact/src';
+import { UploadImageBehavior } from '../cakereact/src';
 
 export class ProductModel extends BaseModel {
   constructor() {

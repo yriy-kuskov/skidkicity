@@ -1,21 +1,22 @@
-import React, { useEffect } from 'react';
-import { useController } from '../../cakereact/src/Controller/useController';
-import { CakeForm, CakeInput } from '../../cakereact/src/Components/FormHelper';
+import React, { useEffect, useMemo } from 'react';
+import { useController } from '../../cakereact/src';
+import { CakeForm, CakeInput } from '../../cakereact/src';
 import { 
   AdminPage, 
   AdminHeader, 
   AdminFormSection, 
   AdminTableSection 
-} from '../../cakereact/src/Components/AdminUI';
+} from '../../cakereact/src';
 import { StoreModel } from '../../models/Store';
 
-const storeModel = new StoreModel();
-
 export default function StoresPage() {
+    // Модель создается только при первом рендере страницы
+    const storeModel = useMemo(() => new StoreModel(), []);
     const controller = useController(storeModel);
     const { getList, setRecord } = controller;
   
     useEffect(() => {
+      console.log("2. Controller Start");
       getList({ order: ['name', 'asc'] });
     }, [getList]);
   

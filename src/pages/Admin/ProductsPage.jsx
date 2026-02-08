@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react';
-import { useController } from '../../cakereact/src/Controller/useController';
-import { CakeForm, CakeInput, CakeSelect, CakeMultiSelect } from '../../cakereact/src/Components/FormHelper';
+import React, { useEffect, useMemo } from 'react';
+import { useController } from '../../cakereact/src';
+import { CakeForm, CakeInput, CakeSelect, CakeMultiSelect } from '../../cakereact/src';
 import { 
   AdminPage, 
   AdminHeader, 
   AdminFormSection, 
   AdminTableSection 
-} from '../../cakereact/src/Components/AdminUI';
+} from '../../cakereact/src';
 import { ProductModel } from '../../models/Product';
 import { CategoryModel } from '../../models/Category';
-import { CakeImage } from '../../cakereact/src/Components/CakeImage';
-
-const productModel = new ProductModel();
+import { CakeImage } from '../../cakereact/src';
 
 export default function ProductsPage() {
+    // Модель создается только при первом рендере страницы
+    const productModel = useMemo(() => new ProductModel(), []);
     const controller = useController(productModel);
     const { getList, setRecord } = controller;
   

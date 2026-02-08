@@ -14,7 +14,7 @@ import DealsPage from './pages/Admin/DealsPage';
 import StoresPage from './pages/Admin/StoresPage';
 import { AuthProvider } from './hooks/useAuth';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import { CakeNotFound } from './cakereact/src/Components/Pages/CakeNotFound';
+import { CakeNotFound } from './cakereact/src';
 
 function App() {
   const notFoundAdminCategories = [

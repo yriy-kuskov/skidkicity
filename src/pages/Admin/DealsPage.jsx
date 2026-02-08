@@ -1,21 +1,21 @@
-import React, { useEffect } from 'react';
-import { useController } from '../../cakereact/src/Controller/useController';
-import { CakeForm, CakeInput, CakeSelect, CakeMultiSelect } from '../../cakereact/src/Components/FormHelper';
+import React, { useEffect, useMemo } from 'react';
+import { useController } from '../../cakereact/src';
+import { CakeForm, CakeInput, CakeSelect, CakeMultiSelect } from '../../cakereact/src';
 import { 
   AdminPage, 
   AdminHeader, 
   AdminFormSection, 
   AdminTableSection 
-} from '../../cakereact/src/Components/AdminUI';
+} from '../../cakereact/src';
 import { DealModel } from '../../models/Deal';
 import { ProductModel } from '../../models/Product';
 import { StoreModel } from '../../models/Store';
 import { DealTypeModel } from '../../models/DealType';
-import { CakeImage } from '../../cakereact/src/Components/CakeImage';
-
-const dealModel = new DealModel();
+import { CakeImage } from '../../cakereact/src';
 
 export default function DealsPage() {
+    // Модель создается только при первом рендере страницы
+    const dealModel = useMemo(() => new DealModel(), []);
     const controller = useController(dealModel);
     const { getList, setRecord } = controller;
   

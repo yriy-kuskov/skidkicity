@@ -7,6 +7,7 @@ import { registerSW } from 'virtual:pwa-register'
 import { supabase } from './lib/supabase';
 import { CakeReact } from './cakereact/src';
 
+console.log("1. Init Start");
 CakeReact.init(supabase);
 
 // Автоматическое обновление Service Worker
