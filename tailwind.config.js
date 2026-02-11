@@ -3,6 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@cakereact/core/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {

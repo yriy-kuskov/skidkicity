@@ -1,25 +1,25 @@
-import { BaseModel } from '../cakereact/src';
-import { ImageOptimizer } from '../cakereact/src';
-import { UploadImageBehavior } from '../cakereact/src';
+import { BaseModel } from '@cakereact/core';
+import { ImageOptimizer } from '@cakereact/core';
+import { UploadImageBehavior } from '@cakereact/core';
 
 export class ProductModel extends BaseModel {
   constructor() {
     super('products', {
       displayField: 'name',
     });
-    
+
     this.uploader = new UploadImageBehavior({
       // Поле 1: С фото и оптимизацией
       image_url: {
         folder: 'products',
         transformers: [
           // Оптимизируем: макс. ширина 800px, качество 70%, формат WebP (он легче)
-          (file) => ImageOptimizer.compress(file, { 
+          (file) => ImageOptimizer.compress(file, {
             maxWidth: 800,
-            maxHeight: 800, 
+            maxHeight: 800,
             quality: 0.6,
-            mimeType: 'image/webp' 
-         })
+            mimeType: 'image/webp'
+          })
         ]
       },
       // Поле 2: Штрих-код (загружаем "как есть", без потерь качества)

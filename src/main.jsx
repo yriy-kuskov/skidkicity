@@ -5,9 +5,8 @@ import App from './App.jsx'
 import './index.css'
 import { registerSW } from 'virtual:pwa-register'
 import { supabase } from './lib/supabase';
-import { CakeReact } from './cakereact/src';
+import { CakeReact } from '@cakereact/core';
 
-console.log("1. Init Start");
 CakeReact.init(supabase);
 
 // Автоматическое обновление Service Worker

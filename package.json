@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cakereact/core": "^0.1.0",
     "@supabase/supabase-js": "^2.93.3",
     "jsbarcode": "^3.12.3",
     "lucide-react": "^0.344.0",

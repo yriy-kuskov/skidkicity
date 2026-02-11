@@ -1,5 +1,5 @@
 // src/models/DealType.js
-import { BaseModel } from "../cakereact/src";
+import { BaseModel } from "@cakereact/core";
 
 export class DealTypeModel extends BaseModel {
   constructor() {
